@@ -42,6 +42,8 @@ workdir=$(dirname $1)
 
 if [[ $SENTS -eq "1" ]];
 then
+	# Use cdec tokenizer output to the .out file, 
+	# then write the modified file to the .sentences file.
 	"${TOKENIZER}" < "$1" | sed -E 's/(^# ::.*)cannot/\1can not/g' > "$1.sentences"
 
 else
