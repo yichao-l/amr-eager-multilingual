@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 AMR (Abstract Meaning Representation) structure
@@ -7,6 +7,7 @@ For detailed description of AMR, see http://www.isi.edu/natural-language/amr/a.p
 
 """
 
+from __future__ import print_function
 from collections import defaultdict
 import sys
 
@@ -80,11 +81,9 @@ class AMR(object):
         for i, v in enumerate(self.nodes):
             self.nodes[i] = node_map_dict[v]
         # update node name in relations
-        for i, d in enumerate(self.relations):
-            new_dict = {}
-            for k, v in d.items():
-                new_dict[node_map_dict[k]] = v
-            self.relations[i] = new_dict
+        for node_relations in self.relations:
+            for i, l in enumerate(node_relations):
+                node_relations[i][1] = node_map_dict[l[1]]
   
     def get_triples(self):
         """
@@ -99,14 +98,14 @@ class AMR(object):
         attribute_triple = []
         for i in range(len(self.nodes)):
             instance_triple.append(("instance", self.nodes[i], self.node_values[i]))
-            # k is the other node this node has relation with
-            # v is relation name
-            for k, v in self.relations[i].items():
-                relation_triple.append((v, self.nodes[i], k))
-            # k2 is the attribute name
-            # v2 is the attribute value
-            for k2, v2 in self.attributes[i].items():
-                attribute_triple.append((k2, self.nodes[i], v2))
+            # l[0] is relation name
+            # l[1] is the other node this node has relation with
+            for l in self.relations[i]:
+                relation_triple.append((l[0], self.nodes[i], l[1]))
+            # l[0] is the attribute name
+            # l[1] is the attribute value
+            for l in self.attributes[i]:
+                attribute_triple.append((l[0], self.nodes[i], l[1]))
         return instance_triple, attribute_triple, relation_triple
 
 
@@ -126,14 +125,14 @@ class AMR(object):
             # an instance triple is instance(node name, node value).
             # For example, instance(b, boy).
             instance_triple.append(("instance", self.nodes[i], self.node_values[i]))
-            # k is the other node this node has relation with
-            # v is relation name
-            for k, v in self.relations[i].items():
-                relation_triple.append((v, self.nodes[i], k))
-            # k2 is the attribute name
-            # v2 is the attribute value
-            for k2, v2 in self.attributes[i].items():
-                relation_triple.append((k2, self.nodes[i], v2))
+            # l[0] is relation name
+            # l[1] is the other node this node has relation with
+            for l in self.relations[i]:
+                relation_triple.append((l[0], self.nodes[i], l[1]))
+            # l[0] is the attribute name
+            # l[1] is the attribute value
+            for l in self.attributes[i]:
+                relation_triple.append((l[0], self.nodes[i], l[1]))
         return instance_triple, relation_triple
 
 
@@ -147,10 +146,10 @@ class AMR(object):
             lines.append("Node "+ str(i) + " " + self.nodes[i])
             lines.append("Value: " + self.node_values[i])
             lines.append("Relations:")
-            for k, v in self.relations[i].items():
-                lines.append("Node " + k + " via " + v)
-            for k2, v2 in self.attributes[i].items():
-                lines.append("Attribute: " + k2 + " value " + v2)
+            for relation in self.relations[i]:
+                lines.append("Node " + relation[1] + " via " + relation[0])
+            for attribute in self.attributes[i]:
+                lines.append("Attribute: " + attribute[0] + " value " + attribute[1])
         return "\n".join(lines)
 
     def __repr__(self):
@@ -161,8 +160,34 @@ class AMR(object):
         Output AMR string
 
         """
-        print >> DEBUG_LOG, self.__str__()
+        print(self.__str__(), file=DEBUG_LOG)
 
+    @staticmethod
+    def get_amr_line(input_f):
+        """
+        Read the file containing AMRs. AMRs are separated by a blank line.
+        Each call of get_amr_line() returns the next available AMR (in one-line form).
+        Note: this function does not verify if the AMR is valid
+
+        """
+        cur_amr = []
+        has_content = False
+        for line in input_f:
+            line = line.strip()
+            if line == "":
+                if not has_content:
+                    # empty lines before current AMR
+                    continue
+                else:
+                    # end of current AMR
+                    break
+            if line.strip().startswith("#"):
+                # ignore the comment line (starting with "#") in the AMR file
+                continue
+            else:
+                has_content = True
+                cur_amr.append(line.strip())
+        return "".join(cur_amr)
 
     @staticmethod
     def parse_AMR_line(line):
@@ -218,7 +243,7 @@ class AMR(object):
                 if state == 2:
                     # in this state, current relation name should be empty
                     if cur_relation_name != "":
-                        print >> ERROR_LOG, "Format error when processing ", line[0:i+1]
+                        print("Format error when processing ", line[0:i + 1], file=ERROR_LOG)
                         return None
                     # update current relation name for future use
                     cur_relation_name = "".join(cur_charseq).strip()
@@ -253,7 +278,7 @@ class AMR(object):
                     cur_charseq[:] = []
                     parts = temp_attr_value.split()
                     if len(parts) < 2:
-                        print >> ERROR_LOG, "Error in processing; part len < 2", line[0:i+1]
+                        print("Error in processing; part len < 2", line[0:i + 1], file=ERROR_LOG)
                         return None
                     # For the above example, node name is "op1", and node value is "w"
                     # Note that this node name might not be encountered before
@@ -262,7 +287,7 @@ class AMR(object):
                     # We need to link upper level node to the current
                     # top of stack is upper level node
                     if len(stack) == 0:
-                        print >> ERROR_LOG, "Error in processing", line[:i], relation_name, relation_value
+                        print("Error in processing", line[:i], relation_name, relation_value, file=ERROR_LOG)
                         return None
                     # if we have not seen this node name before
                     if relation_value not in node_dict:
@@ -283,7 +308,7 @@ class AMR(object):
                     cur_charseq[:] = []
                     # if this node name is already in node_dict, it is duplicate
                     if node_name in node_dict:
-                        print >> ERROR_LOG, "Duplicate node name ", node_name, " in parsing AMR"
+                        print("Duplicate node name ", node_name, " in parsing AMR", file=ERROR_LOG)
                         return None
                     # push the node name to stack
                     stack.append(node_name)
@@ -310,7 +335,7 @@ class AMR(object):
                         cur_relation_name = ""
                 else:
                     # error if in other state
-                    print >> ERROR_LOG, "Error in parsing AMR", line[0:i+1]
+                    print("Error in parsing AMR", line[0:i + 1], file=ERROR_LOG)
                     return None
                 state = 3
             elif c == ")":
@@ -319,7 +344,7 @@ class AMR(object):
                     continue
                 # stack should be non-empty to find upper level node
                 if len(stack) == 0:
-                    print >> ERROR_LOG, "Unmatched parenthesis at position", i, "in processing", line[0:i+1]
+                    print("Unmatched parenthesis at position", i, "in processing", line[0:i + 1], file=ERROR_LOG)
                     return None
                 # Last significant symbol is ":". Now we encounter ")"
                 # Example:
@@ -330,7 +355,7 @@ class AMR(object):
                     cur_charseq[:] = []
                     parts = temp_attr_value.split()
                     if len(parts) < 2:
-                        print >> ERROR_LOG, "Error processing", line[:i+1], temp_attr_value
+                        print("Error processing", line[:i + 1], temp_attr_value, file=ERROR_LOG)
                         return None
                     relation_name = parts[0].strip()
                     relation_value = parts[1].strip()
@@ -368,47 +393,48 @@ class AMR(object):
         attribute_list = []
         for v in node_name_list:
             if v not in node_dict:
-                print >> ERROR_LOG, "Error: Node name not found", v
+                print("Error: Node name not found", v, file=ERROR_LOG)
                 return None
             else:
                 node_value_list.append(node_dict[v])
-            # build relation map and attribute map for this node
-            relation_dict = {}
-            attribute_dict = {}
+            # build relation list and attribute list for this node
+            node_rel_list = []
+            node_attr_list = []
             if v in node_relation_dict1:
                 for v1 in node_relation_dict1[v]:
-                    relation_dict[v1[1]] = v1[0]
+                    node_rel_list.append([v1[0], v1[1]])
             if v in node_relation_dict2:
                 for v2 in node_relation_dict2[v]:
                     # if value is in quote, it is a constant value
                     # strip the quote and put it in attribute map
                     if v2[1][0] == "\"" and v2[1][-1] == "\"":
-                        attribute_dict[v2[0]] = v2[1][1:-1]
+                        node_attr_list.append([[v2[0]], v2[1][1:-1]])
                     # if value is a node name
                     elif v2[1] in node_dict:
-                        relation_dict[v2[1]] = v2[0]
+                        node_rel_list.append([v2[0], v2[1]])
                     else:
-                        attribute_dict[v2[0]] = v2[1]
-            # each node has a relation map and attribute map
-            relation_list.append(relation_dict)
-            attribute_list.append(attribute_dict)
+                        node_attr_list.append([v2[0], v2[1]])
+            # each node has a relation list and attribute list
+            relation_list.append(node_rel_list)
+            attribute_list.append(node_attr_list)
         # add TOP as an attribute. The attribute value is the top node value
-        attribute_list[0]["TOP"] = node_value_list[0]
+        attribute_list[0].append(["TOP", node_value_list[0]])
         result_amr = AMR(node_name_list, node_value_list, relation_list, attribute_list)
         return result_amr
 
 # test AMR parsing
+# run by amr.py [file containing AMR]
 # a unittest can also be used.
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print >> ERROR_LOG, "No file given"
+        print("No file given", file=ERROR_LOG)
         exit(1)
     amr_count = 1
     for line in open(sys.argv[1]):
         cur_line = line.strip()
         if cur_line == "" or cur_line.startswith("#"):
             continue
-        print >> DEBUG_LOG, "AMR", amr_count
+        print("AMR", amr_count, file=DEBUG_LOG)
         current = AMR.parse_AMR_line(cur_line)
         current.output_amr()
         amr_count += 1
