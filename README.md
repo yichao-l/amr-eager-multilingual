@@ -86,8 +86,8 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
   
 - Run the oracle to generate the training data:
   ```
-  python collect.py -t <training_file_dir> -m <model_dir> -l [en|it|de|es|zh]
-  python create_dataset.py -t <training_file_dir> -v <validation_file> -m <model_dir> -l [en|it|de|es|zh]
+  python collect.py -t <training_file> -m <model_dir> -l [en|it|de|es|zh]
+  python create_dataset.py -t <training_file> -v <validation_file> -m <model_dir> -l [en|it|de|es|zh]
   ```
   
 - Train the three neural networks: 
