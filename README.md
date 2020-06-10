@@ -79,12 +79,16 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
 # Train a model
 
 - Preprocess training and validation sets:
+  - The first script generates <amr_file>.alignments, <amr_file>.graphs, <amr_file>.out (the syntactical information), and <amr_file>.sentences.
+  - The second script generates <amr_file>.alignments.p, <amr_file>.graphs.p, <amr_file>.out.p, <amr_file>.sentences.p.
   ```
   ./preprocessing.sh -f <amr_file> -l [en|it|de|es|zh]
   python preprocessing.py --amrs -f <amr_file> -l [en|it|de|es|zh]
   ```
   
 - Run the oracle to generate the training data:
+  - The first script generates dependencies.txt, organizations.txt, phrasetable.p, relations.txt.
+  - The seconde generates labels_dataset_train.txt, labels_dataset_valid.txt, reentr_dataset_train.txt, reentr_dataset_valid.txt
   ```
   python collect.py -t <training_file> -m <model_dir> -l [en|it|de|es|zh]
   python create_dataset.py -t <training_file> -v <validation_file> -m <model_dir> -l [en|it|de|es|zh]
