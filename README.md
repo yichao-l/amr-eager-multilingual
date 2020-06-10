@@ -87,6 +87,8 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
   ```
   
 - Run the oracle to generate the training data:
+  - The first script generates dependencies.txt, organizations.txt, phrasetable.p, relations.txt.
+  - The seconde generates labels_dataset_train.txt, labels_dataset_valid.txt, reentr_dataset_train.txt, reentr_dataset_valid.txt
   ```
   python collect.py -t <training_file> -m <model_dir> -l [en|it|de|es|zh]
   python create_dataset.py -t <training_file> -v <validation_file> -m <model_dir> -l [en|it|de|es|zh]
