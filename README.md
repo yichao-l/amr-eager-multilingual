@@ -4,6 +4,7 @@ AMR-EAGER [1] is a transition-based parser for Abstract Meaning Representation (
 
 # Installation
 
+- Python 2.7
 - Make sure you have Java 8
 - Install Torch and torch packages dp, nngraph and optim (using luarocks, as explained here: http://torch.ch/docs/getting-started.html)
 - Install the following python dependencies: numpy and pytorch (https://github.com/hughperkins/pytorch)
@@ -80,11 +81,12 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
 
 - Preprocess training and validation sets:
   - The first script generates <amr_file>.alignments, <amr_file>.graphs, <amr_file>.out (the syntactical information), and <amr_file>.sentences.
-  - The second script generates <amr_file>.alignments.p, <amr_file>.graphs.p, <amr_file>.out.p, <amr_file>.sentences.p.
+  - The second script generates <amr_file>.alignments.p, <amr_file>.graphs.p, ~~<amr_file>.out.p, <amr_file>.sentences.p.~~
   ```
   ./preprocessing.sh -f <amr_file> -l [en|it|de|es|zh]
   python preprocessing.py --amrs -f <amr_file> -l [en|it|de|es|zh]
   ```
+  - eg. LDC2020T02/data/amrs/split/training/..., and outputs will be saved in the same dir
   
 - Run the oracle to generate the training data:
   - The first script generates dependencies.txt, organizations.txt, phrasetable.p, relations.txt.
@@ -93,6 +95,7 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
   python collect.py -t <training_file> -m <model_dir> -l [en|it|de|es|zh]
   python create_dataset.py -t <training_file> -v <validation_file> -m <model_dir> -l [en|it|de|es|zh]
   ```
+  - outputs will be in model dir
   
 - Train the three neural networks: 
   ```
@@ -109,7 +112,7 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
   ```
   th nnets/report.lua <model_dir>
   ```
-- Note: If you used GPUs to train the models,you will need to uncomment the line ```require cunn``` from ```nnets/classify.lua```.
+- Note: If you used GPUs to train the models,you will need to uncomment the line ```require cunn``` from ```nnets/classify.lua``` and ```nnets_en/report.lua```.
 
 # Open-source code used:
 
