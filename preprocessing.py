@@ -60,8 +60,11 @@ def run_single(parse, language):
     return dependencies, buftokens
 
 def run(prefix, amrs, language):
+    # Split the entries at line breaks, only save the negation words.
     negation_words = open("resources_" + language + "/negations.txt").read().splitlines()
     negation_words = [n.split()[0].replace('"',"") for n in negation_words]
+
+    # Create data as an instance of amrdata.AMRDataset, that generates an AMRSentence for each sentence containing all information necessary to the parser.
     amrdata = __import__("amrdata_" + language)
     data = amrdata.AMRDataset(prefix, amrs)
     alltokens = []

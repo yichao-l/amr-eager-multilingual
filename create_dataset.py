@@ -46,7 +46,7 @@ def create(prefix, split, language, model_dir):
         t = TransitionSystem(embs, data, "TRAIN", language)
         for feats, action in t.statesactions():
             f_rel, f_lab, f_reentr = feats
-
+            # What's in f_*? They are each a representation of the configurations, but what does the numbers represent? A: Feature representations e.g.
             for f_cat in f_rel:
                 for v in f_cat:
                     dataset.write(str(v) + ",")
@@ -69,6 +69,7 @@ def create(prefix, split, language, model_dir):
                             reentr_dataset.write(str(1) + "\n")
                         else:
                             reentr_dataset.write(str(2) + "\n")
+
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-t", "--train", help="Training set", required = True)
