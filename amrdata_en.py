@@ -44,10 +44,12 @@ class AMRDataset:
         if demo:
              blocks = prefix.split("\n\n")
         else:
+             # Read the syntactic info for each sentence, e.g. the tokesn, POS tages, lemmas, name entities, dep parses. Store them seperate lists.
              blocks = open(prefix + ".out", 'r').read().split("\n\n")
         alltokens, allpos, alllemmas, allnes, alldepslines = self._loadFromCoreNLP(blocks)
  
         if amrs:
+            # Store each sentence's graph and alignments in lists.
             allgraphs = open(prefix + ".graphs").read().split("\n\n")
     
             a = Alignments(prefix + ".alignments", allgraphs)

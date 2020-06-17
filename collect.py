@@ -24,12 +24,14 @@ def collect(prefix, language, model_dir):
     Resources.init_table(model_dir, True)
 
     print "Loading data.."
+    # tokens, dependencies, alignments, relations for each sentece in the dataset.
     alltokens = pickle.load(open(prefix + ".tokens.p", "rb"))
     alldependencies = pickle.load(open(prefix + ".dependencies.p", "rb"))
     allalignments = pickle.load(open(prefix + ".alignments.p", "rb"))
     allrelations = pickle.load(open(prefix + ".relations.p", "rb"))
 
     print "Collecting relation labels.."
+    # Store the set of all of the existed relation labels in the "relations.txt".
     seen_r = set()
     fw = open(model_dir + "/relations.txt","w")
     for relations in allrelations:
@@ -40,6 +42,7 @@ def collect(prefix, language, model_dir):
     fw.close()
 
     print "Collecting dependency labels.."
+    # Store the set of all of the existed dependencies labels in "dependencies.txt".
     seen_d = set()
     fw = open(model_dir + "/dependencies.txt","w")
     for dependencies in alldependencies:
@@ -48,10 +51,12 @@ def collect(prefix, language, model_dir):
                 fw.write(d[1] + "\n")
                 seen_d.add(d[1])
     fw.close()
-
-    counter = 0
+    
+    # Initialize the embeddings
     resources_dir = "resources_" + language
     embs = Embs(resources_dir, model_dir, True)
+    
+    counter = 0
     for tokens, dependencies, alignments, relations in zip(alltokens, alldependencies, allalignments, allrelations):
         counter += 1
         print "Sentence no: ", counter

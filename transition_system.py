@@ -84,6 +84,7 @@ class TransitionSystem:
             self.variables = Variables()
         self.state = State(embs, relations2, tokens, dependencies, alignments, oracle, hooks, self.variables, stage, Rules(self._labels), language)
         self.history = History()
+        
         while self.state.isTerminal() == False:
             #print self.state
             tok = copy.deepcopy(self.state.buffer.peek())

@@ -337,6 +337,7 @@ class State:
         feats = []
 
         #extract a different feature vector for each sibling
+        # From each of its sibilings?
         for s in [item[0] for p in self.stack.relations.parents[self.stack.top()] for item in self.stack.relations.children[p[0]] if item[0] != self.stack.top()]:
         
             parents = [i[0] for i in self.stack.relations.parents[self.stack.top()]]

@@ -289,18 +289,21 @@ if not opt.silent then
    table.print(opt)
 end
 
+-- Count the number of the possible edge labels.
 local nRels = 0
 for line in io.lines(opt.model_dir .. "/relations.txt") do
     nRels = nRels + 1
 end
 nRels = nRels + 3
 
+-- Count the number of the possible dependency edge labels.
 local nDeps = 0
 for line in io.lines(opt.model_dir .. "/dependencies.txt") do
     nDeps = nDeps + 1
 end
 nDeps = nDeps + 3
 
+-- Count the number of POS tags.
 local nPos = 0
 for line in io.lines("resources_en/postags.txt") do
     nPos = nPos + 1
