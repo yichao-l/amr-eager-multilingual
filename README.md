@@ -78,6 +78,7 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
 
 
 # Train a model
+- **When using BERT embeddings, use `trans_enc.py` to preprocess the <amr_file> and `bert_enc.py` to extract pretrained embeddings.**
 
 - Preprocess training and validation sets:
   - The first script generates <amr_file>.alignments, <amr_file>.graphs, <amr_file>.out (the syntactical information), and <amr_file>.sentences.
@@ -88,6 +89,7 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
   ```
   (The outputs will be saved in the same dir.)
   
+
 - Run the oracle to generate the training data:
   - The first script generates dependencies.txt, organizations.txt, phrasetable.p, relations.txt.
   - The seconde generates labels_dataset_train.txt, labels_dataset_valid.txt, reentr_dataset_train.txt, reentr_dataset_valid.txt
