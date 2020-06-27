@@ -6,7 +6,7 @@ def encoding(sentence):
     """
     Encoding sentence using BERT, SINGLE sentence version
     :param sentence: input sentence
-    :return: 4D encoded layer, #layers * #batch(sentence) * #token * #hidden unit
+    :return: 4D encoded layer, [#layers * #batch(sentence) * #token * #hidden unit]
     """
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     marked_text = "[CLS] " + sentence + " [SEP]"
@@ -56,10 +56,26 @@ def check(encode_layer, layer_i=0, batch_i=0, token_i=0, n=10):
     print(vec[:n])  # print first 10 values
 
 
+def word_vec(index, encode_layer):
+    """
+    embedding for given token(index in a sentence)
+    :param index: index of word
+    :param encode_layer: 4D encoded layer, [#layers * #batch(sentence) * #token * #hidden unit]
+    :return:    768d vector
+    """
+    # Concatenates last 4 layers is best solution for NER task, dependents on different tasks.
+    concat_last_4_layers = torch.cat((encode_layer[-1], encode_layer[-2], encode_layer[-3], encode_layer[-4]), 0)
+
+    # summed_last_4_layers =[torch.sum(torch.stack(encode_layer)[-4:], 0)]  # [number_of_tokens, 768]
+
+    vec = concat_last_4_layers[0][index].reshape(1, -1)
+    return vec
+
+
 if __name__ == "__main__":
     sentence1 = "Here is the sentence I want embeddings for."
     print("sentence: " + sentence1)
     embedding = encoding(sentence1)
     info(embedding)
-    check(embedding)
+    # check(embedding)
     print("end")
