@@ -30,7 +30,7 @@ def encoding(sentence):
 
 def info(encode_layer):
     """
-    Output status of encoded layer.
+    Output status of encoded layer
     :param encode_layer: BERT model
     """
     layer_i = 0
