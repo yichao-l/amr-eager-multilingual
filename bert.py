@@ -68,7 +68,7 @@ def word_vec(index, encode_layer):
 
     # summed_last_4_layers =[torch.sum(torch.stack(encode_layer)[-4:], 0)]  # [number_of_tokens, 768]
 
-    vec = concat_last_4_layers[0][index].reshape(1, -1)
+    vec = concat_last_4_layers[0][index]
     return vec
 
 
