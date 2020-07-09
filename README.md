@@ -4,7 +4,7 @@ AMR-EAGER [1] is a transition-based parser for Abstract Meaning Representation (
 
 The document includes sections for:
 - [Installation](#installation)
-- [Run the parser with pretrained model(#run-the-parser-with-pretrained-model)
+- [Run the parser with pretrained model](#run-the-parser-with-pretrained-model)
 - [Evaluation](#evaluation)
 - [Annotation Projection](#annotation-projection)
 - [Train a model](#train-a-model)
