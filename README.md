@@ -2,9 +2,17 @@
 
 AMR-EAGER [1] is a transition-based parser for Abstract Meaning Representation (http://amr.isi.edu/). This repository provides an extension of AMR-EAGER to English, Italian, Spanish, German and Chinese. See [2] for a detailed explanation and experiments.
 
+The document includes sections for:
+- [Installation](#installation)
+- [Run the parser with pretrained model(#run-the-parser-with-pretrained-model)
+- [Evaluation](#evaluation)
+- [Annotation Projection](#annotation-projection)
+- [Train a model](#train-a-model)
+- [Open-source code used](#open-source-code-used)
+
 # Installation
 
-- Python 2.7
+- Python 2.7 is currently required for [evaluation](#evaluation), Python 3.6 is used/tested on the other modules of the code.
 - Make sure you have Java 8
 - Install Torch and torch packages dp, nngraph and optim (using luarocks, as explained here: http://torch.ch/docs/getting-started.html)
 - Install the following python dependencies: numpy and pytorch (https://github.com/hughperkins/pytorch)
@@ -14,9 +22,10 @@ AMR-EAGER [1] is a transition-based parser for Abstract Meaning Representation (
 - For Chinese, you wull also need to install the mafan package (https://pypi.org/project/mafan/).
 
 <a name="Parse"></a>
+
 # Run the parser with pretrained model
 
-Note: the input file must contain sentences (one sentence for line), see ```contrib/sample-sentences.txt``` for example. All following commands should be run from the parser root directory.
+Note: the input file must contain sentences (one sentence for line), see ```contrib/sample-sentences.txt``` for an example. All following commands should be run from the parser root directory.
 
 Preprocessing:
 ```
@@ -116,7 +125,7 @@ This process is prone to errors in the middle, so we do not provide an end-to-en
   ```
 - Note: If you used GPUs to train the models,you will need to uncomment the line ```require cunn``` from ```nnets/classify.lua``` and ```nnets_en/report.lua```.
 
-# Open-source code used:
+# Open-source code used
 
 - Smatch: http://amr.isi.edu/evaluation.html
 - Tokenizer: https://github.com/redpony/cdec
